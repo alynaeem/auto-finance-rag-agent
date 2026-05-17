@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auto-finance-rag-agent"
+version = "0.1.0"
+description = "Auto finance RAG agent with policy retrieval, tools, and FastAPI backend"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic",
+    "python-dotenv",
+    "langchain",
+    "langchain-community",
+    "langchain-core",
+    "langchain-text-splitters",
+    "pypdf",
+    "tiktoken",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi",
+    "uvicorn",
+]
+llm = [
+    "langchain-openai",
+]
+vectorstore = [
+    "chromadb",
+    "langchain-chroma",
+]
+modeling = [
+    "joblib",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+]
+dev = [
+    "pytest",
+    "ruff",
+    "black",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.black]
+line-length = 88

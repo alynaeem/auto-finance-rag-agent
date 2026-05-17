@@ -1,10 +1,18 @@
-from src.app.services.ingestion import load_raw_documents
+from auto_finance_rag_agent.services.ingestion import load_raw_documents
 
 
 def main():
     docs = load_raw_documents()
 
     print(f"Total loaded document objects: {len(docs)}")
+
+    if not docs:
+        print(
+            "No documents were loaded from data/raw/policy_docs "
+            "or data/synthetic/company_policy_documents."
+        )
+        return
+
     print("-" * 80)
 
     for i, doc in enumerate(docs[:10], start=1):
