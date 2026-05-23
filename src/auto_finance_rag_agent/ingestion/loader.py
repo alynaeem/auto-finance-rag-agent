@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from chromadb import Documents
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 
@@ -35,6 +34,7 @@ def load_pdf_documents(pdf_dir: Path = PDF_dir) -> list[Document]:
     return documents
 
 def load_markdown_policy_files(markdown_dir: Path = MD_dir) -> list[Document]:
+
     """
     Load synthetic markdown company policy files.
 
@@ -59,6 +59,7 @@ def load_markdown_policy_files(markdown_dir: Path = MD_dir) -> list[Document]:
     return documents
 
 def load_all_raw_documents() -> list[Document]:
+
     """
     Load all raw documents before chunking.
 
