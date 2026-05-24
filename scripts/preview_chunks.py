@@ -1,10 +1,10 @@
 from collections import Counter
 
-from auto_finance_rag_agent.services.ingestion import load_document_chunks
+from auto_finance_rag_agent.ingestion.pipeline import build_document_chunks
 
 
 def main() -> None:
-    chunks = load_document_chunks()
+    chunks = build_document_chunks()
 
     print(f"Total chunks: {len(chunks)}")
     if not chunks:
