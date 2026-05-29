@@ -13,6 +13,9 @@ langgraph
 langchain-community
 langchain-openai
 langchain-chroma
+langchain-google-genai
+langchain-huggingface
+sentence-transformers
 chromadb
 pypdf
 tiktoken
