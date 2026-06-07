@@ -1,5 +1,6 @@
 import os
 import shutil
+from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -23,6 +24,7 @@ LOCAL_EMBEDDING_MODEL = os.getenv(
 )
 
 
+@lru_cache(maxsize=1)
 def get_embedding_model() -> Embeddings:
     if EMBEDDING_PROVIDER == "gemini":
         return GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
@@ -50,13 +52,11 @@ def build_vectorstore(chunks: list[Document], reset: bool = True) -> Chroma:
 
     if reset:
         reset_vectorstore()
+        load_vectorstore.cache_clear()
 
     embeddings = get_embedding_model()
 
-    chunk_ids = [
-        chunk.metadata["chunk_id"]
-        for chunk in chunks
-    ]
+    chunk_ids = [chunk.metadata["chunk_id"] for chunk in chunks]
 
     return Chroma.from_documents(
         documents=chunks,
@@ -67,6 +67,7 @@ def build_vectorstore(chunks: list[Document], reset: bool = True) -> Chroma:
     )
 
 
+@lru_cache(maxsize=1)
 def load_vectorstore() -> Chroma:
     embeddings = get_embedding_model()
 
@@ -75,3 +76,6 @@ def load_vectorstore() -> Chroma:
         persist_directory=str(CHROMA_DIR),
         embedding_function=embeddings,
     )
+def warm_up_vectorstore() -> None:
+    vectorstore = load_vectorstore()
+    vectorstore.similarity_search("warm up retrieval", k=1)
