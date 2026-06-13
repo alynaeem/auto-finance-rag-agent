@@ -2,13 +2,14 @@ import os
 import shutil
 from functools import lru_cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv
-from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_huggingface import HuggingFaceEmbeddings
+
+if TYPE_CHECKING:
+    from langchain_chroma import Chroma
 
 
 load_dotenv()
@@ -27,9 +28,13 @@ LOCAL_EMBEDDING_MODEL = os.getenv(
 @lru_cache(maxsize=1)
 def get_embedding_model() -> Embeddings:
     if EMBEDDING_PROVIDER == "gemini":
+        from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
         return GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
 
     if EMBEDDING_PROVIDER == "local":
+        from langchain_huggingface import HuggingFaceEmbeddings
+
         return HuggingFaceEmbeddings(
             model_name=LOCAL_EMBEDDING_MODEL,
             model_kwargs={"device": "cpu"},
@@ -46,7 +51,9 @@ def reset_vectorstore() -> None:
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def build_vectorstore(chunks: list[Document], reset: bool = True) -> Chroma:
+def build_vectorstore(chunks: list[Document], reset: bool = True) -> "Chroma":
+    from langchain_chroma import Chroma
+
     if not chunks:
         raise ValueError("Cannot build vectorstore because no chunks were provided.")
 
@@ -68,7 +75,9 @@ def build_vectorstore(chunks: list[Document], reset: bool = True) -> Chroma:
 
 
 @lru_cache(maxsize=1)
-def load_vectorstore() -> Chroma:
+def load_vectorstore() -> "Chroma":
+    from langchain_chroma import Chroma
+
     embeddings = get_embedding_model()
 
     return Chroma(
@@ -76,6 +85,8 @@ def load_vectorstore() -> Chroma:
         persist_directory=str(CHROMA_DIR),
         embedding_function=embeddings,
     )
+
+
 def warm_up_vectorstore() -> None:
     vectorstore = load_vectorstore()
     vectorstore.similarity_search("warm up retrieval", k=1)

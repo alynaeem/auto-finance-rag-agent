@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 load_dotenv()
@@ -36,6 +35,8 @@ def format_contexts(contexts: list[dict]) -> str:
 
 
 def generate_grounded_answer(query: str, contexts: list[dict]) -> str:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+
     llm = ChatGoogleGenerativeAI(
         model=CHAT_MODEL,
         temperature=0.2,
