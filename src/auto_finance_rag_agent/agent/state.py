@@ -1,4 +1,7 @@
-from typing import Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
+
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
 
 
 AgentIntent = Literal[
@@ -12,6 +15,7 @@ AgentIntent = Literal[
 
 
 class AgentState(TypedDict, total=False):
+    messages: Annotated[list[BaseMessage], add_messages]
     user_query: str
     intent: AgentIntent
     input_data: dict[str, Any]

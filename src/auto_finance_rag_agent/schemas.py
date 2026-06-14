@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Literal
+from typing import Any
 
 
 class RAGRequest(BaseModel):
@@ -60,3 +61,15 @@ class MissingDocumentsResponse(BaseModel):
     documents_provided: list[str]
     missing_documents: list[str]
     is_complete: bool
+
+class AgentRequest(BaseModel):
+    user_query: str = Field(..., min_length=1)
+    thread_id: str = Field(default="default-thread", min_length=1)
+    input_data: dict[str, Any] = Field(default_factory=dict)
+
+
+class AgentResponse(BaseModel):
+    thread_id: str
+    intent: str
+    final_answer: str
+    result: dict[str, Any] = Field(default_factory=dict)

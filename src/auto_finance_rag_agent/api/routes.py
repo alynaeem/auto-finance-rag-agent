@@ -1,8 +1,10 @@
 from fastapi import APIRouter
-
+from auto_finance_rag_agent.agent.graph import run_agent
 from auto_finance_rag_agent.generation.rag_service import ask_policy_question
 from auto_finance_rag_agent.tools.missing_documents import check_missing_documents
 from auto_finance_rag_agent.schemas import (
+    AgentRequest,
+    AgentResponse,
     LoanCalculationRequest,
     LoanCalculationResponse,
     LoanComparisonRequest,
@@ -62,3 +64,18 @@ def check_documents(request: MissingDocumentsRequest) -> MissingDocumentsRespons
     )
 
     return MissingDocumentsResponse(**result)
+
+@router.post("/agent", response_model=AgentResponse)
+def run_agent_endpoint(request: AgentRequest) -> AgentResponse:
+    state = run_agent(
+        user_query=request.user_query,
+        input_data=request.input_data,
+        thread_id=request.thread_id,
+    )
+
+    return AgentResponse(
+        thread_id=request.thread_id,
+        intent=state.get("intent", "unknown"),
+        final_answer=state.get("final_answer", ""),
+        result=state.get("result", {}),
+    )

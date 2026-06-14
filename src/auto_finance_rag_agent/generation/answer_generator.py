@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-2.5-flash")
+CHAT_MODEL = os.getenv("CHAT_MODEL", "qwen/qwen3-235b-a22b")
+CHAT_BASE_URL = os.getenv("OPENROUTER_URL", "https://openrouter.ai/api/v1")
+CHAT_API_KEY = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
 
 
 def format_contexts(contexts: list[dict]) -> str:
@@ -35,9 +37,11 @@ def format_contexts(contexts: list[dict]) -> str:
 
 
 def generate_grounded_answer(query: str, contexts: list[dict]) -> str:
-    from langchain_google_genai import ChatGoogleGenerativeAI
+    from langchain_openai import ChatOpenAI
 
-    llm = ChatGoogleGenerativeAI(
+    llm = ChatOpenAI(
+        api_key=CHAT_API_KEY,
+        base_url=CHAT_BASE_URL,
         model=CHAT_MODEL,
         temperature=0.2,
     )
